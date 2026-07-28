@@ -9,7 +9,7 @@ interface PageProps {
 export default async function ProductsPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   
-  let products = [];
+  let products: any[] = [];
   let errorMessage = "";
 
   try {
