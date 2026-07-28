@@ -1,6 +1,5 @@
 import { Product } from "@/types/product";
 
-// Fallback mock products in case the external API fails or is blocked on Vercel
 const fallbackProducts: Product[] = [
   {
     id: 1,
@@ -8,7 +7,7 @@ const fallbackProducts: Product[] = [
     price: 109.95,
     description: "Your perfect pack for everyday use and walks in the forest.",
     category: "men's clothing",
-    image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60",
     rating: { rate: 3.9, count: 120 }
   },
   {
@@ -17,7 +16,7 @@ const fallbackProducts: Product[] = [
     price: 22.3,
     description: "Slim-fitting style, contrast raglan long sleeve.",
     category: "men's clothing",
-    image: "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX_UX_SY_UY_.jpg",
+    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=60",
     rating: { rate: 4.1, count: 259 }
   },
   {
@@ -26,7 +25,7 @@ const fallbackProducts: Product[] = [
     price: 55.99,
     description: "Great outerwear jackets for Spring/Autumn/Winter.",
     category: "men's clothing",
-    image: "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg",
+    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60",
     rating: { rate: 4.7, count: 500 }
   },
   {
@@ -35,16 +34,16 @@ const fallbackProducts: Product[] = [
     price: 15.99,
     description: "The color could be slightly different between on the screen and in practice.",
     category: "men's clothing",
-    image: "https://fakestoreapi.com/img/71YXzeOuslL._AC_UY879_.jpg",
+    image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&auto=format&fit=crop&q=60",
     rating: { rate: 2.1, count: 430 }
   },
   {
     id: 5,
-    title: "John Hardy Women's Legends Naga Gold & Silver Dragon Station Chain Bracelet",
+    title: "John Hardy Women's Legends Naga Gold Dragon Chain Bracelet",
     price: 695,
     description: "From our Legends Collection, the Naga was inspired by the mythical water dragon.",
     category: "jewelery",
-    image: "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3.jpg",
+    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&auto=format&fit=crop&q=60",
     rating: { rate: 4.6, count: 400 }
   },
   {
@@ -53,7 +52,7 @@ const fallbackProducts: Product[] = [
     price: 168,
     description: "Satisfaction Guaranteed. Return or exchange any order within 30 days.",
     category: "jewelery",
-    image: "https://fakestoreapi.com/img/61sbMiUnoGL._AC_UL640_QL65_ML3.jpg",
+    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60",
     rating: { rate: 3.9, count: 70 }
   }
 ];
@@ -61,7 +60,7 @@ const fallbackProducts: Product[] = [
 export async function getProducts(): Promise<Product[]> {
   try {
     const res = await fetch("https://fakestoreapi.com/products", {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 3600 },
     });
     
     if (!res.ok) {
@@ -69,9 +68,13 @@ export async function getProducts(): Promise<Product[]> {
     }
     
     const data = await res.json();
-    return data;
+    // Agar API se data aaye bhi toh un ki images ko working https Unsplash links se replace kar dein taake broken image ka masla na aaye
+    return data.map((item: any, index: number) => ({
+      ...item,
+      image: fallbackProducts[index % fallbackProducts.length].image
+    }));
   } catch (error) {
     console.warn("API fetch failed, returning fallback products:", error);
-    return fallbackProducts; // Fallback ensure karega ke live site par products lazmi show hon
+    return fallbackProducts;
   }
 }
