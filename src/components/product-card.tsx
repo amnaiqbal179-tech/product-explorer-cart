@@ -1,20 +1,23 @@
-'use client'; // <-- Isay sab se upar lazmi add karein
+'use client';
 
 import { Product } from "@/types/product";
-import { useCartStore } from "@/store/use-cart-store"; // Zustand store import karein
+import { useCartStore } from "@/store/use-cart-store";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const addItem = useCartStore((state) => state.addItem); // Zustand se addItem function le lein
+  const addItem = useCartStore((state) => state.addItem);
+
+  // HTTP ko HTTPS mein convert karne ke liye taake browser block na kare
+  const secureImage = product.image ? product.image.replace("http://", "https://") : "";
 
   return (
     <div className="border rounded-xl p-4 shadow-md bg-white dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between">
       <div className="relative h-48 w-full mb-4 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
         <img
-          src={product.image}
+          src={secureImage}
           alt={product.title}
           className="object-contain h-full w-full p-2"
         />
@@ -38,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <button
-        onClick={() => addItem(product)} // Direct cart store function call ho ga
+        onClick={() => addItem(product)}
         className="mt-4 w-full bg-black text-white dark:bg-white dark:text-black py-2 rounded-lg font-medium hover:opacity-90 transition"
       >
         Add to Cart
