@@ -1,16 +1,18 @@
-import Image from "next/image"; // Agar use nahi ho raha toh hata dein
+'use client'; // <-- Isay sab se upar lazmi add karein
+
 import { Product } from "@/types/product";
+import { useCartStore } from "@/store/use-cart-store"; // Zustand store import karein
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
 }
 
-export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
+  const addItem = useCartStore((state) => state.addItem); // Zustand se addItem function le lein
+
   return (
     <div className="border rounded-xl p-4 shadow-md bg-white dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between">
       <div className="relative h-48 w-full mb-4 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-        {/* Standard img tag use karne se external images kabhi block nahi hongi */}
         <img
           src={product.image}
           alt={product.title}
@@ -36,7 +38,7 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
       </div>
 
       <button
-        onClick={() => onAddToCart(product)}
+        onClick={() => addItem(product)} // Direct cart store function call ho ga
         className="mt-4 w-full bg-black text-white dark:bg-white dark:text-black py-2 rounded-lg font-medium hover:opacity-90 transition"
       >
         Add to Cart
