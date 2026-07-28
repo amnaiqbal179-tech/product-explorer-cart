@@ -47,5 +47,5 @@ The `ThemeProvider` is mounted inside the root layout (`app/layout.tsx`) wrappin
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/your-username/product-explorer-cart.git](https://github.com/your-username/product-explorer-cart.git)
+   git clone https://github.com/amnaiqbal179-tech/product-explorer-cart.git
    cd product-explorer-cart
