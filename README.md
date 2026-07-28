@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Product Explorer & Shopping Cart
 
-## Getting Started
+A modern, high-performance e-commerce web application built with **Next.js App Router**, **TypeScript**, **Tailwind CSS**, **Zustand**, and **React Context**. This project is engineered to demonstrate precise architectural separation of state management tiers.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## State Management Decisions
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Data / State | State Type | Storage Mechanism | Rationale |
+| :--- | :--- | :--- | :--- |
+| **Product records** | Server state | Server Component (`app/products/page.tsx`) | Fetched directly on the server to ensure fast initial page loads, optimal SEO, and reduced client-side bundle overhead. |
+| **Search and filters** | URL state | `searchParams` via Next.js router | Enables bookmarkable, shareable views and ensures filter states survive page refreshes and browser history navigation. |
+| **Shopping Cart** | Global client state | Zustand (`use-cart-store.ts`) | Provides a lightweight, boilerplate-free state store with built-in persistence middleware for cart items and quantities. |
+| **Theme (Light/Dark)** | Global client state | React Context (`theme-provider.tsx`) | Isolates theme preferences cleanly without bloating the app or forcing unnecessary client-side conversions. |
+| **Cart Drawer visibility** | Local UI state | React `useState` | Encapsulates temporary component-level behavior that does not need to be shared globally. |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architectural & Design Explanations
 
-## Learn More
+### 1. Why Redux Toolkit was not required
+Redux Toolkit introduces unnecessary boilerplate and bundle size for a scoped client feature like a shopping cart. **Zustand** provides a minimal, high-performance API with built-in localStorage persistence and seamless React subscription hooks.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Why product data was not copied into Zustand
+Product data is owned by the server and fetched dynamically per request. Duplicating large catalogue arrays into a client store would introduce stale data issues, memory bloat, and synchronization complexities. 
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Where the Theme Provider was mounted
+The `ThemeProvider` is mounted inside the root layout (`app/layout.tsx`) wrapping the child components. This establishes a clean global theme boundary while keeping the root layout primarily server-rendered.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Components containing `'use client'` and why
+* **`ProductCard`**: Uses client-side state handling and event listeners (`onClick`) to dispatch items to the Zustand cart store.
+* **`ProductFilters`**: Relies on Next.js client router hooks (`useRouter`, `useSearchParams`) to dynamically update URL query parameters.
+* **`CartDrawer` & `Navbar`**: Require React hooks (`useState`, `useEffect`) and context consumers to toggle visibility states and handle theme preferences.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
+* **Framework:** Next.js App Router (React)
+* **Language:** TypeScript
+* **Styling:** Tailwind CSS (v4)
+* **State Management:** Zustand (Cart), React Context (Theme), URL SearchParams (Filters)
+* **Deployment:** Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Getting Started Locally
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/your-username/product-explorer-cart.git](https://github.com/your-username/product-explorer-cart.git)
+   cd product-explorer-cart
